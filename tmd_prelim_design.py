@@ -1,7 +1,8 @@
 """
-Multi-Tiered Pendulum TMD Preliminary Design
+TMD Preliminary Design
 
-Based on chapter 4 of textbook 'Intro to Structural Motion Control'
+Based on chapter 5 of textbook 'Structural Motion Engineering'
+by Connor, J. and Laflamme, S. (2014)
 
 UI run using streamlit
 
@@ -32,7 +33,18 @@ from tmd_preliminary_design_functions import *
 
 # Main text
 st.title('TMD Preliminary Design')
-st.markdown('The following webapp')
+st.markdown('The following webapp provides preliminary design variables '
+            'for a tuned mass damper. These design variables are:')
+st.markdown("Mass Ratio $$\Big(\\frac{m_{damper}}{m_{building}}" \
+            "\Big)$$, Frequency Ratio $\Big(\\frac{f_{damper}}" \
+            "{f_{building}}\Big)$, Damping Ratio (of damper) "
+            "$(\\xi_{damper})$")
+st.markdown('These variables were found under the assumption that the '
+            'building acts like an SDOF system with a tuned mass damper'
+            'attached to the top. Sometimes, if the input dynamic response'
+            ' factor is too low an error will occur. An explanation on how'
+            ' this app works can be found here: '
+            'https://seanjyu.github.io/tmd_preliminary_design/')
 
 # Sidebar - inputs
 st.sidebar.title("Inputs")
@@ -49,18 +61,21 @@ st.sidebar.markdown('To assume building is undamped set damping ratio '
 # are errors output error message. If no errors put sidebar values
 # into functions then plot optimal design.
 if st.sidebar.button("Submit"):
-    print(dyn_amp, damping_ratio)
     sol = tmd_prelim_design_function(dyn_amp, damping_ratio)
-    st.plotly_chart(sol[3])
-    mass_result_str = "Mass Ratio $\Big(\\frac{m_{damper}}{m_{building}}" \
-                      "\Big)$ = " + "{0:.3f} \n".format(sol[0])
-    f_result_str = "Frequency Ratio $\Big(\\frac{f_{damper}}" \
-                   "{f_{building}}\Big)$ = " + "{0:.3f} \n".format(sol[1])
-    damping_result_str = "Damping Ratio $(\\xi_{damper})$ = "\
-                         + "{0:.3f} \n".format(sol[2])
-    st.markdown(mass_result_str)
-    st.markdown(f_result_str)
-    st.markdown(damping_result_str)
+    if sol == "root_find_error":
+        st.error("Error with root finding, please increase minimum "
+                    "required dynamic amplification factor.")
+    else:
+        st.plotly_chart(sol[3])
+        mass_result_str = "Mass Ratio $\Big(\\frac{m_{damper}}{m_{building}}" \
+                          "\Big)$ = " + "{0:.3f} \n".format(sol[0])
+        f_result_str = "Frequency Ratio $\Big(\\frac{f_{damper}}" \
+                       "{f_{building}}\Big)$ = " + "{0:.3f} \n".format(sol[1])
+        damping_result_str = "Damping Ratio (of damper) $(\\xi_{damper})$ = "\
+                             + "{0:.3f} \n".format(sol[2])
+        st.markdown(mass_result_str)
+        st.markdown(f_result_str)
+        st.markdown(damping_result_str)
 
 
 

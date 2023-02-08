@@ -1,10 +1,16 @@
+"""
+TMD Preliminary Design
+
+The following file contains all the functions used to calculate the
+preliminary tmd design.
+"""
+
 from scipy import optimize
 import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-# global dyn_amp, f_ratio_opt, damping_ratio, tmd_d_ratio, mass_ratio
+
 def undamped_dyn_factor_opt(m):
     return (1 + m) / (0.5 * m) ** .5 - dyn_amp
 
@@ -55,10 +61,14 @@ def interpolate_mass_ratio(damp_ratio, dyn_amp):
         def curve_func_opt(x):
             return opt_a * np.exp(-opt_b * x) + opt_c * x + opt_d
 
-        sol = optimize.root_scalar(curve_func_opt,
-                                         bracket=[0.000000001, 0.1],
-                                         method='brentq')
-        mass_ratio = sol.root
+        try:
+            sol = optimize.root_scalar(curve_func_opt,
+                                             bracket=[0.000000001, 0.1],
+                                             method='brentq')
+            mass_ratio = sol.root
+        except ValueError:
+            mass_ratio = "root_find_error"
+
     return mass_ratio
 
 
@@ -135,21 +145,24 @@ def tmd_prelim_design_function(dyn_amp_input, damping_ratio):
     dyn_amp = dyn_amp_input
 
     if damping_ratio <= 0:
+        try:
+            undamped_dyn_factor_opt_sol = optimize.root_scalar(
+                undamped_dyn_factor_opt,
+                bracket=[0.000000001, 0.1],
+                method='brentq')
 
-        undamped_dyn_factor_opt_sol = optimize.root_scalar(
-            undamped_dyn_factor_opt,
-            bracket=[0.000000001, 0.1],
-            method='brentq')
+            mass_ratio = undamped_dyn_factor_opt_sol.root
 
-        mass_ratio = undamped_dyn_factor_opt_sol.root
+            # calculate f_opt
+            f_ratio_opt = (1 - 0.5 * mass_ratio) ** (0.5) / (1 + mass_ratio)
 
-        # calculate f_opt
-        f_ratio_opt = (1 - 0.5 * mass_ratio) ** (0.5) / (1 + mass_ratio)
+            # calculate damping ratio
+            tmd_d_ratio = (mass_ratio * (3 - (0.5 * mass_ratio) ** 0.5) /
+                           (8 * (1 + mass_ratio) * (
+                                       1 - 0.5 * mass_ratio))) ** 0.5
 
-        # calculate damping ratio
-        tmd_d_ratio = (mass_ratio * (3 - (0.5 * mass_ratio) ** 0.5) /
-                       (8 * (1 + mass_ratio) * (
-                                   1 - 0.5 * mass_ratio))) ** 0.5
+        except ValueError:
+            return "root_find_error"
 
     else:
 
@@ -158,8 +171,11 @@ def tmd_prelim_design_function(dyn_amp_input, damping_ratio):
 
         mass_ratio = interpolate_mass_ratio(damping_ratio, dyn_amp)
 
+        if mass_ratio == "root_find_error":
+            return mass_ratio
+
         f_ratio_opt, tmd_d_ratio = damped_building_factors(
-            mass_ratio + 0.001,
+            mass_ratio,
             damping_ratio)
 
         max_dyn_factor = max(amplification_vs_f(damping_ratio, mass_ratio,
@@ -176,6 +192,12 @@ def tmd_prelim_design_function(dyn_amp_input, damping_ratio):
                 amplification_vs_f(damping_ratio, mass_ratio,
                                    f_ratio_opt, tmd_d_ratio, x))
 
+        # Apply a limit to mass ratio at 0.8
+        if mass_ratio > 0.8:
+            mass_ratio = 0.8
+            f_ratio_opt, tmd_d_ratio = damped_building_factors(
+                mass_ratio,
+                damping_ratio)
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x,
