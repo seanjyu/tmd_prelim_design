@@ -21,16 +21,6 @@ Packages
 import streamlit as st
 from tmd_preliminary_design_functions import *
 
-# main loop
-# inputs
-#dyn_amp = 15
-#damping_ratio = 0.0
-# a = tmd_prelim_design_function(dyn_amp, damping_ratio)
-#print(a)
-#a[3].show()
-
-# streamlit UI
-
 # Main text
 st.title('TMD Preliminary Design')
 st.markdown('The following webapp provides preliminary design variables '
