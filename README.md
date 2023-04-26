@@ -23,4 +23,3 @@ Scipy (1.7.3)
 
 ## Instructions
 To use the app just specify the required DAF and building damping ratio in the left pane and then press submit.
-Tuned Mass Damper Preliminary Design
