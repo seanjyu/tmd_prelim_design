@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tuned Mass Damper Preliminary Design Web App
 ![readme_img](readme_img.PNG)
 
@@ -23,3 +24,6 @@ Scipy (1.7.3)
 
 ## Instructions
 To use the app just specify the required DAF and building damping ratio in the left pane and then press submit.
+=======
+Tuned Mass Damper Preliminary Design
+>>>>>>> 89dc849921f516631a9e2f8b1a83924189e6b8c9
