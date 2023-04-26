@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 # Tuned Mass Damper Preliminary Design Web App
 ![readme_img](readme_img.PNG)
 
 The following web app gives an approximate design for tuned mass dampers given a dynamic amplification factor (DAF) and building damping ratio. This app is based off the equations found in the textbook Structural Motion Engineering by J Connor and S Laflamme; and the paper “Optimum tuned-mass dampers for minimizing steady-state response of support-excited and damped systems" by H.-C. Tsai and G.-C Lin. 
-The optimized design variables are the mass ratio ($\Big(\\frac{m_{damper}}{m_{building}}$), frequency ratio ($\Big(\\frac{f_{damper}}{f_{building}}\Big)$) and the Damping ratio of the damper ($(\\xi_{damper})$). 
+The optimized design variables are the mass ratio $\Big(\\frac{m_{damper}}{m_{building}}$, frequency ratio $\Big(\\frac{f_{damper}}{f_{building}}\Big)$ and the Damping ratio of the damper $(\\xi_{damper})$. 
 
 A more in depth documentation as to how the design is calculated can be found in my blog:
 
@@ -26,4 +25,3 @@ Scipy (1.7.3)
 To use the app just specify the required DAF and building damping ratio in the left pane and then press submit.
 =======
 Tuned Mass Damper Preliminary Design
->>>>>>> 89dc849921f516631a9e2f8b1a83924189e6b8c9
